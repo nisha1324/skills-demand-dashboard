@@ -1,0 +1,46 @@
+{
+  "source": "Jobs and Skills Australia, Internet Vacancy Index, August 2026 release (published 23 September 2026)",
+  "licence": "CC BY 4.0, (c) Commonwealth of Australia, Jobs and Skills Australia",
+  "tables": {
+    "occupation_state": {
+      "file": "data/occupation_state.csv.gz",
+      "source_file": "internet_vacancies_anzsco4_occupations_states_and_territories_-_august_2026.xlsx",
+      "source_sha256": "810ca8800ff59ec9c58ec86ebda6808c668c2e69bf7de5c55905e49475453b55",
+      "rows": 794826,
+      "first_month": "2006-03",
+      "last_month": "2026-08",
+      "empty_values": 15498,
+      "sha256": "d029b9bce0415062cfa2551ab5e044fac830c16597532b99bf545946c7a81a8e"
+    },
+    "ivi_region": {
+      "file": "data/ivi_region.csv.gz",
+      "source_file": "internet_vacancies_anzsco2_occupations_ivi_regions_-_august_2026.xlsx",
+      "source_sha256": "c2777b3a03e0186a790fd4889a9c5c5d0e0c11b2bb58152f4ec67e133ff39735",
+      "rows": 413364,
+      "first_month": "2010-05",
+      "last_month": "2026-08",
+      "empty_values": 0,
+      "sha256": "90d2557cb550536ee3f6420e2ca84d81339fba1e45f72dba0245ab8d4ddcaef1"
+    },
+    "sa4_region": {
+      "file": "data/sa4_region.csv.gz",
+      "source_file": "internet_vacancies_anzsco2_occupations_gccsa_and_sa4_regions_-_august_2026.xlsx",
+      "source_sha256": "6790f2354a64f69c52a9ad6a9173fe5b7aca43902c626226498754780c0078a1",
+      "rows": 262200,
+      "first_month": "2019-01",
+      "last_month": "2026-08",
+      "empty_values": 0,
+      "sha256": "52e61c9895519d8fe62d9801b9b78d82c4a803f576ff4ba83d3ea739c51ccbef"
+    },
+    "skill_level_state": {
+      "file": "data/skill_level_state.csv.gz",
+      "source_file": "internet_vacancies_anzsco_skill_level_states_and_territories_-_august_2026.xlsx",
+      "source_sha256": "26d4dad65384308011fe9f0bf9c08fccbbefe75d05e2d2e758a2be4db919ea36",
+      "rows": 26784,
+      "first_month": "2006-01",
+      "last_month": "2026-08",
+      "empty_values": 0,
+      "sha256": "a7bc09204af3462c9f6c7c4435ff7e2c30956d86b86925b22f8d46b5f7aeea3f"
+    }
+  }
+}
