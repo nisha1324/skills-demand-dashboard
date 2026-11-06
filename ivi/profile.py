@@ -170,3 +170,12 @@ def cell_sizes(wide: pd.DataFrame, month: str) -> pd.DataFrame:
     out.columns = ["ads_3ma", "cells"]
     out["share"] = out["cells"] / out["cells"].sum()
     return out
+
+
+def top_risers(wide: pd.DataFrame, base_month: str, month: str, min_base: float = 0.0,
+               k: int = 10) -> pd.DataFrame:
+    """The k cells with the biggest year-on-year rise, among cells whose base is above min_base."""
+    d = pd.DataFrame({"base": wide[base_month], "now": wide[month]}).dropna()
+    d = d[d["base"] > max(min_base, 0.0)]
+    d["change"] = d["now"] / d["base"] - 1
+    return d.sort_values(["change", "base"], ascending=[False, False]).head(k).reset_index()

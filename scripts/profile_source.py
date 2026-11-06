@@ -172,6 +172,10 @@ def main() -> None:
     sizes = P.cell_sizes(wide, last)
     noise = pd.concat([P.noise_by_base(wide, year_ago, last),
                        P.noise_by_base(wide, "2018-08", "2019-08")], ignore_index=True)
+    risers_all = P.top_risers(wide, year_ago, last)
+    risers_20 = P.top_risers(wide, year_ago, last, min_base=20)
+    titles = occ[occ["level"] == "occupation"].drop_duplicates("anzsco_code").set_index("anzsco_code")["anzsco_title"]
+    occ_title = lambda code: titles[code]  # noqa: E731
     noise_now = noise[noise["years"] == f"{year_ago} to {last}"].reset_index(drop=True)
 
     # CSV outputs
@@ -286,8 +290,10 @@ def main() -> None:
         f"series (averaged over the same 3 months, 2010 to 2019), the raw figure runs "
         f"{pct(low['ratio_mean'] - 1, 1, sign=True)} in the 3 months ending {MONTHS[int(low['cal_month']) - 1]} "
         f"and {pct(high['ratio_mean'] - 1, 1, sign=True)} in the 3 months ending "
-        f"{MONTHS[int(high['cal_month']) - 1]}. A fall from October to January of about "
-        f"{abs(high['ratio_mean'] - low['ratio_mean']) * 100:.0f}% is the calendar, not the market.",
+        f"{MONTHS[int(high['cal_month']) - 1]}. So the raw figure falls about "
+        f"{abs(low['ratio_mean'] / high['ratio_mean'] - 1) * 100:.0f}% from "
+        f"{MONTHS[int(high['cal_month']) - 1]} to {MONTHS[int(low['cal_month']) - 1]} in a normal year: "
+        "that is the calendar, not the market.",
         "",
         "**Rule:** occupation and regional changes are measured year on year on the same month, or as "
         "12-month averages. Never month on month.",
@@ -351,6 +357,15 @@ def main() -> None:
         f"{pct(big('over 0 to 5'), 0)} of cells with more than 0 and up to 5 ads moved by more than 50%, against "
         f"{pct(big('over 20 to 50'), 0)} of cells with 20 to 50 and {pct(big('over 100'), 1)} of cells "
         "over 100. The pattern is the same in 2018-19, before COVID.",
+        "",
+        f"Without a floor, a \"fastest growing\" list is all noise: the top {len(risers_all)} year-on-year "
+        f"risers all started from {n(risers_all['base'].max(), 2)} ads a month or fewer, led by "
+        f"{risers_all['state'].iloc[0]} {occ_title(risers_all['anzsco_code'].iloc[0])} "
+        f"({n(risers_all['base'].iloc[0], 2)} to {n(risers_all['now'].iloc[0], 2)}, "
+        f"{pct(risers_all['change'].iloc[0], 0, sign=True)}). With the floor, the top riser is "
+        f"{risers_20['state'].iloc[0]} {occ_title(risers_20['anzsco_code'].iloc[0])} "
+        f"({n(risers_20['base'].iloc[0], 2)} to {n(risers_20['now'].iloc[0], 2)}, "
+        f"{pct(risers_20['change'].iloc[0], 0, sign=True)}), a change big enough to look into.",
         "",
         "**Rule:** growth rankings only include cells averaging more than 20 ads a month in the base "
         "period; smaller cells are shown as counts, not percentages. State × occupation results are "

@@ -35,7 +35,7 @@ Reconciliation with JSA's release: the seasonally adjusted series changed by 559
 
 ### 1. The raw 3-month average is seasonal
 
-Occupation and regional data come only as raw 3-month averages. Against the seasonally adjusted series (averaged over the same 3 months, 2010 to 2019), the raw figure runs −10.9% in the 3 months ending Jan and +8.3% in the 3 months ending Oct. A fall from October to January of about 19% is the calendar, not the market.
+Occupation and regional data come only as raw 3-month averages. Against the seasonally adjusted series (averaged over the same 3 months, 2010 to 2019), the raw figure runs −10.9% in the 3 months ending Jan and +8.3% in the 3 months ending Oct. So the raw figure falls about 18% from Oct to Jan in a normal year: that is the calendar, not the market.
 
 **Rule:** occupation and regional changes are measured year on year on the same month, or as 12-month averages. Never month on month.
 
@@ -103,6 +103,8 @@ The gap also differs by state, so it isn't spread evenly. IVI regions are best-f
 ### 5. Most state × occupation cells are small, and small cells are noisy
 
 Of the 2,808 published state × occupation cells in August 2026, 1,631 (58%) have 20 or fewer ads a month. Year on year, 46% of cells with more than 0 and up to 5 ads moved by more than 50%, against 3% of cells with 20 to 50 and 0.6% of cells over 100. The pattern is the same in 2018-19, before COVID.
+
+Without a floor, a "fastest growing" list is all noise: the top 10 year-on-year risers all started from 0.67 ads a month or fewer, led by SA Film, Television, Radio and Stage Directors (0.33 to 6.00, +1700%). With the floor, the top riser is QLD Midwives (24.67 to 49.33, +100%), a change big enough to look into.
 
 **Rule:** growth rankings only include cells averaging more than 20 ads a month in the base period; smaller cells are shown as counts, not percentages. State × occupation results are shown with their base size.
 

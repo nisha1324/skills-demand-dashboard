@@ -146,3 +146,14 @@ def test_cell_sizes_put_exact_bin_edges_in_the_lower_bin():
     s = P.cell_sizes(w, "2026-08").set_index("ads_3ma")["cells"]
     assert s["0"] == 1 and s["over 0 to 5"] == 1 and s["over 5 to 10"] == 1
     assert s["over 10 to 20"] == 1 and s["over 100"] == 1 and s.sum() == 5
+
+
+def test_top_risers_applies_the_floor_before_ranking():
+    w = pd.DataFrame({"2025-08": [0.33, 0.0, 25.0, 100.0], "2026-08": [6.0, 9.0, 50.0, 150.0]},
+                     index=pd.MultiIndex.from_tuples([("SA", "2123"), ("NT", "1111"), ("QLD", "2541"),
+                                                      ("NSW", "2539")], names=["state", "anzsco_code"]))
+    all_ = P.top_risers(w, "2025-08", "2026-08", k=2)
+    assert list(all_["anzsco_code"]) == ["2123", "2541"]  # a zero base can't be ranked
+    floor = P.top_risers(w, "2025-08", "2026-08", min_base=20)
+    assert list(floor["anzsco_code"]) == ["2541", "2539"]
+    assert floor["change"].iloc[0] == pytest.approx(1.0)
