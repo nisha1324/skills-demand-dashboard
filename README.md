@@ -1,7 +1,7 @@
 # Which jobs and regions are hiring in Australia? (skills-demand dashboard)
 
-> **Status: in progress, Parts 1-2 of 5 done** (source profile, occupation demand). Next: regional
-> demand (Part 3), a Streamlit dashboard (Part 4), then CI and the final write-up (Part 5).
+> **Status: in progress, Parts 1-3 of 5 done** (source profile, occupation demand, regional demand).
+> Next: a Streamlit dashboard (Part 4), then CI and the final write-up (Part 5).
 
 Recruiters, training providers and workforce planners all need the same answer: **which
 occupations are employers advertising for, where, and is that demand rising or cooling?** A
@@ -128,6 +128,64 @@ all in SA (+18%) and WA (+14%).
   4.8×, vets 5.1×). Some are real shortages, but a jump that big could also be a change in how ads
   are coded. Check the monthly series before acting on one.
 
+## Part 3: where the ads are
+
+Full report: [`results/REGIONAL_DEMAND.md`](results/REGIONAL_DEMAND.md) (generated). It follows Part
+1's rules for regions: regions are compared with each other, never with the national total; the 37
+IVI regions (from October 2010) carry the comparison with 2019; the GCCSA/SA4 areas are used year
+on year only. "Capital-city regions" are the 8 IVI regions that contain a capital.
+
+**A shift to regional Australia, and it's still going.** The 29 regional areas averaged 61,229 ads
+a month in the 12 months to August 2026, +67.1% on 2019, against +4.9% for the capital-city regions.
+Regional Australia now holds 30.1% of placed ads, up from 21.2% in 2019. Over the last year the
+capitals lost 7,253 ads a month (−4.8%) while regional areas gained 362 (+0.6%).
+
+**It isn't a coding effect.** On average 6,013 ads a month aren't placed in any region. Even if every one
+belonged to a capital, the regional share would be 29.2%, so unplaced ads can explain at most 0.8 of
+the 8.8 points of shift. The share jumped in 2020, fell back to 25.6% in July 2022, then rose in 48
+of the 49 months since.
+
+![Regional share](results/charts/09_regional_share.png)
+
+**Only three regions are below 2019, and all are capitals:** Canberra & ACT (−21.4%), Sydney
+(−18.5%) and Melbourne (−15.3%). Every one of the 29 regional areas is above 2019, from Pilbara &
+Kimberley (+18.0%) to Tamworth and North West NSW (+154.7%).
+
+![Regions vs 2019](results/charts/10_regions_vs_2019.png)
+
+**Health and care lead the move.** 47.3% of ads for medical practitioners and nurses are now
+regional (38.3% in 2019). Regional ads for them rose +27.4% on the year while the capitals' were
+flat (−0.2%): regional areas added 1,191 a month and the capitals lost 11. So the doctor and nurse
+growth in Part 2 is a regional story. Carers and aides (41.8% regional, from 28.6%) and legal,
+social and welfare professionals (39.1%, from 23.6%; +13.6% in the regions on the year, −8.8% in
+the capitals) moved the same way. ICT professional ads stay in the capitals: only 5.7% are regional.
+
+![Regional share by group](results/charts/11_group_regional_share.png)
+
+**The year-on-year view agrees.** In the GCCSA/SA4 file the 8 greater capital cities are −4.6% on
+the year and the 42 regional SA4s +0.4%. Regional NSW leads: 6 of the 10 fastest-growing SA4s are
+in NSW, topped by New England and North West (+21.3%). The two geographies give the same direction
+for all 8 capitals, at most 0.9 points apart.
+
+![SA4 year on year](results/charts/12_sa4_year_on_year.png)
+
+**So what for the business?**
+
+- **Recruiters:** 3 in 10 placed ads are now outside the capitals, and that part of the market held
+  up while the capitals fell. A desk that only covers the capitals is working the shrinking part.
+  The fastest-growing big regional markets: Tamworth and North West NSW (+23.3%), Dubbo & Western
+  NSW (+12.5%) and NSW North Coast (+8.5%).
+- **Training providers:** health and care courses have a case for regional campuses or clinical
+  placements. On the NSW North Coast, for example, medical practitioners and nurses have 541 ads a
+  month, 2.7× as common as across all regions, and +62.0% on the year. ICT courses are a capital-city
+  market.
+- **Employers and workforce planners:** Canberra, Sydney and Melbourne have fewer ads than in 2019,
+  so employers there compete with fewer other ads for staff. Every regional area has more ads than
+  in 2019, so a regional employer should plan for more competition for the same local workers.
+- **A caution:** single jumps can come from a few large employers. Tamworth's ads for medical
+  practitioners and nurses went from 120 to 350 a month in a year; check the monthly series before
+  acting on one. Use region figures to rank and compare places, not as exact counts.
+
 ## How to run
 
 ```bash
@@ -138,6 +196,7 @@ python -m scripts.download_data     # optional: fetches the 4 workbooks (12 MB) 
 python -m scripts.build_snapshot    # optional: rebuilds data/*.csv.gz from them
 python -m scripts.profile_source    # Part 1 report and charts, from the committed snapshot
 python -m scripts.occupation_demand # Part 2 report, charts and CSVs
+python -m scripts.regional_demand   # Part 3 report, charts and CSVs
 pytest
 ```
 
@@ -150,9 +209,11 @@ scripts/download_data.py    fetch the workbooks (official site first, archive fa
 scripts/build_snapshot.py   workbooks -> tidy data/*.csv.gz + SNAPSHOT.json
 scripts/profile_source.py   Part 1 report: results/SOURCE_PROFILE.md, charts 01-04, CSVs
 scripts/occupation_demand.py  Part 2 report: results/OCCUPATION_DEMAND.md, charts 05-08, CSVs
+scripts/regional_demand.py  Part 3 report: results/REGIONAL_DEMAND.md, charts 09-12, CSVs
 ivi/load.py                 load the snapshot with the right types (codes stay text)
 ivi/profile.py              the Part 1 checks, as small testable functions
 ivi/demand.py               the Part 2 measures (12-month averages, the 20-ad floor, demand matrix)
+ivi/regions.py              the Part 3 measures (capital vs regional, location quotient, SA4 year on year)
 tests/                      unit tests on hand-made data + checks on the committed snapshot
 ```
 

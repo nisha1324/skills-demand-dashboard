@@ -100,14 +100,15 @@ def test_capital_crosscheck_gap_in_points():
 
 
 def test_region_leaders_respect_the_floor_and_size():
-    idx = pd.MultiIndex.from_tuples([("A", "x"), ("A", "y"), ("A", "z")])
-    rg = pd.DataFrame({"now": [500.0, 150.0, 40.0], "prev": [490.0, 100.0, 10.0]}, index=idx)
+    idx = pd.MultiIndex.from_tuples([("A", "x"), ("A", "y"), ("A", "z"), ("A", "w")])
+    rg = pd.DataFrame({"now": [500.0, 150.0, 40.0, 300.0], "prev": [490.0, 100.0, 10.0, 700.0]}, index=idx)
     rg["yoy"] = (rg["now"] / rg["prev"] - 1).where(rg["prev"] > D.FLOOR)
-    lq = pd.Series([0.9, 1.5, 4.0], index=idx)
-    titles = pd.Series({"x": "X", "y": "Y", "z": "Z"})
+    lq = pd.Series([0.9, 1.5, 4.0, 0.5], index=idx)
+    titles = pd.Series({"x": "X", "y": "Y", "z": "Z", "w": "W"})
     L = R.region_leaders(rg, lq, titles, min_now=100)
     a = L.loc["A"]
-    assert a["largest"] == "X"
+    # largest now, not largest a year ago (W was 700 then, 300 now)
+    assert a["largest"] == "X" and a["largest_now"] == 500
     # z rose 300% but from a base of 10 ads: under the floor, so y (+50%) leads
     assert a["riser"] == "Y" and a["riser_yoy"] == pytest.approx(0.5)
     # z is the most over-represented but has under 100 ads a month, so y

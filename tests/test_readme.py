@@ -19,7 +19,7 @@ METHOD = {"12", "3", "20", "2", "2019", "2025", "2026", "1", "5", "8", "500"}
 
 
 def part2():
-    return README.split("## Part 2:")[1].split("## How to run")[0]
+    return README.split("## Part 2:")[1].split("## Part 3:")[0]
 
 
 def test_every_part2_figure_is_in_the_report():
