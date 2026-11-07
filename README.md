@@ -1,7 +1,7 @@
 # Which jobs and regions are hiring in Australia? (skills-demand dashboard)
 
-> **Status: in progress, Part 1 of 5 done** (source profile). Next: occupation demand (Part 2),
-> regional demand (Part 3), a Streamlit dashboard (Part 4), then CI and the final write-up (Part 5).
+> **Status: in progress, Parts 1-2 of 5 done** (source profile, occupation demand). Next: regional
+> demand (Part 3), a Streamlit dashboard (Part 4), then CI and the final write-up (Part 5).
 
 Recruiters, training providers and workforce planners all need the same answer: **which
 occupations are employers advertising for, where, and is that demand rising or cooling?** A
@@ -69,6 +69,65 @@ month or fewer, led by film and TV directors in South Australia (0.33 to 6.00 ad
 20-ad floor, the top riser is midwives in Queensland (24.67 to 49.33 ads a month, +100%), a change
 worth looking into. Part 1's rules remove all three problems before any ranking is shown.
 
+## Part 2: which occupations are in demand
+
+Full report: [`results/OCCUPATION_DEMAND.md`](results/OCCUPATION_DEMAND.md) (generated). Every
+change is measured on 12-month averages (a full year, so the seasonal swing cancels) against the
+year before and against 2019, plus the latest 3 months against the same 3 months a year earlier.
+No growth rate is shown on a base of 20 ads a month or fewer.
+
+**The fall has stopped, for now.** Ads averaged 209,655 a month in the 12 months to August 2026,
+−3.3% on the year before. But the latest 3 months are +0.9% on a year earlier, and JSA's seasonally
+adjusted August figure is +4.8% on August 2025.
+
+**One occupation group grew.** Machinery operators and drivers is the only major group up on the
+year (+6.6%) and the furthest above 2019 (+62.0%). Clerical and administrative workers are barely
+above 2019 (+5.2%).
+
+![Major groups](results/charts/05_major_groups.png)
+
+**Doctors and nurses cushioned the fall.** General practitioners and resident medical officers
+added 1,362 ads a month (+36.4%); without them the fall would have been 8,413 a month, not 7,051.
+Registered nurses (+397), electricians (+260) and nursing support workers (+236) came next. The
+biggest falls were general clerks (−806), waiters (−534), child carers (−490) and software
+programmers (−460).
+
+![Where the change came from](results/charts/06_contributions.png)
+
+**A demand matrix for the 108 occupations with 500+ ads a month** sorts each one by two questions:
+up on the year, and above 2019?
+
+| Demand state | Occupations | Ads a month | Largest |
+|---|---|---|---|
+| Growing, above 2019 | 32 | 51,472 | Registered Nurses, General Practitioners and Resident Medical Officers, Other Miscellaneous Labourers, Electricians |
+| Cooling, still above 2019 | 52 | 86,868 | General Clerks, Sales Assistants (General), Retail Managers, Aged and Disabled Carers |
+| Rising, still below 2019 | 2 | 4,238 | Construction Managers, Financial Investment Advisers and Managers |
+| Shrinking, below 2019 | 22 | 31,307 | Advertising and Sales Managers, Accountants, Software and Applications Programmers, Human Resource Professionals |
+
+![Demand matrix](results/charts/07_demand_matrix.png)
+
+**States split sharply.** SA is +82.5% on 2019; VIC (−4.1%) and ACT (−21.4%) are below it, and ACT
+fell most on the year (−15.8%). Machinery operators and drivers rose in 6 of the 8 states, most of
+all in SA (+18%) and WA (+14%).
+
+![States](results/charts/08_state_heatmap.png)
+
+**So what for the business?**
+
+- **Recruiters:** the strongest big markets include registered nurses (6,883 ads a month, +6.1%), GPs
+  (5,105, +36.4%), electricians (3,064, +9.3%) and truck drivers (2,807, +2.0%). General clerks,
+  waiters and child carers are losing the most ads, so placement volumes there are most at risk.
+- **Training providers:** health, care and electrical courses feed occupations that are all above
+  2019, though child carers (−12.9%) and aged and disabled carers (−3.1%) are cooling. ICT courses
+  face a market far below 2019: software programmers −46.6%, ICT business and systems analysts
+  −41.0%.
+- **Workforce planners:** 22 big occupations are below 2019 and still falling, the largest being
+  advertising and sales managers, accountants and software programmers. Don't plan on them
+  bouncing back to 2019 levels.
+- **A caution:** 5 occupations with 100+ ads a month are at least 3 times their 2019 level (GPs
+  4.8×, vets 5.1×). Some are real shortages, but a jump that big could also be a change in how ads
+  are coded. Check the monthly series before acting on one.
+
 ## How to run
 
 ```bash
@@ -78,6 +137,7 @@ pip install -r requirements.txt
 python -m scripts.download_data     # optional: fetches the 4 workbooks (12 MB) into data/raw/
 python -m scripts.build_snapshot    # optional: rebuilds data/*.csv.gz from them
 python -m scripts.profile_source    # Part 1 report and charts, from the committed snapshot
+python -m scripts.occupation_demand # Part 2 report, charts and CSVs
 pytest
 ```
 
@@ -89,8 +149,10 @@ The committed snapshot is enough to rerun every report; the download is only nee
 scripts/download_data.py    fetch the workbooks (official site first, archive fallback, pinned SHA-256)
 scripts/build_snapshot.py   workbooks -> tidy data/*.csv.gz + SNAPSHOT.json
 scripts/profile_source.py   Part 1 report: results/SOURCE_PROFILE.md, charts 01-04, CSVs
+scripts/occupation_demand.py  Part 2 report: results/OCCUPATION_DEMAND.md, charts 05-08, CSVs
 ivi/load.py                 load the snapshot with the right types (codes stay text)
 ivi/profile.py              the Part 1 checks, as small testable functions
+ivi/demand.py               the Part 2 measures (12-month averages, the 20-ad floor, demand matrix)
 tests/                      unit tests on hand-made data + checks on the committed snapshot
 ```
 
