@@ -38,6 +38,12 @@ def test_demand_state_quadrants_and_unrated(tiny):
                    B.NOT_RATED, "Cooling, still above 2019"]
 
 
+def test_one_rate_missing_is_not_rated():
+    # rated on the year, but 2019 had 20 ads a month or fewer: no demand state
+    s = B.demand_state(pd.Series([0.3, NAN]), pd.Series([NAN, 0.2]))
+    assert list(s) == [B.NOT_RATED, B.NOT_RATED]
+
+
 def test_zero_change_is_not_growth():
     s = B.demand_state(pd.Series([0.0]), pd.Series([0.0]))
     assert s.iloc[0] == "Shrinking, below 2019"
@@ -114,10 +120,10 @@ def regions_tiny():
         "yoy": [-0.1, 0.25, 0.125, 0.0], "vs_2019": [-0.1, 1.0, 0.5, 0.25],
         "latest_yoy": [0.0, 0.0, 0.0, 0.0]})
     rg = pd.DataFrame({
-        "region": ["Dubbo"] * 3, "state": ["NSW"] * 3, "anzsco_code": ["25", "73", "11"],
-        "group_title": ["Nurses", "Drivers", "CEOs"], "now": [60.0, 25.0, 15.0],
-        "prev": [40.0, 25.0, 15.0], "change": [20.0, 0.0, 0.0], "yoy": [0.5, 0.0, NAN],
-        "vs_2019": [1.0, NAN, NAN], "lq": [2.0, 1.1, 3.5]})
+        "region": ["Dubbo"] * 4, "state": ["NSW"] * 4, "anzsco_code": ["25", "73", "11", "62"],
+        "group_title": ["Nurses", "Drivers", "CEOs", "Sales"], "now": [60.0, 25.0, 15.0, 20.0],
+        "prev": [40.0, 25.0, 15.0, 20.0], "change": [20.0, 0.0, 0.0, 0.0],
+        "yoy": [0.5, 0.0, NAN, NAN], "vs_2019": [1.0, NAN, NAN, NAN], "lq": [2.0, 1.1, 3.5, 4.0]})
     return {"ivi_regions": reg, "region_group": rg}
 
 
@@ -139,9 +145,20 @@ def test_regions_filters(regions_tiny):
 def test_region_groups_blank_lq_on_small_cells(regions_tiny):
     g = B.region_groups(regions_tiny, "Dubbo").set_index("anzsco_code")
     assert g.loc["25", "lq"] == 2.0 and g.loc["73", "lq"] == 1.1
-    assert np.isnan(g.loc["11", "lq"])  # 15 ads a month: at or under the floor
+    assert np.isnan(g.loc["11", "lq"])  # 15 ads a month: under the floor
+    assert np.isnan(g.loc["62", "lq"])  # exactly 20 ads a month: at the floor, so still blank
     over = B.region_groups(regions_tiny, "Dubbo", "Most over-represented")
     assert list(over["anzsco_code"]) == ["25", "73"]
+
+
+def test_sa4_all_states():
+    t = {"sa4_areas": pd.DataFrame({"region_level": ["SA4", "GCCSA"], "region_name": ["X", "Y"],
+                                    "state": ["NSW", "WA"], "now": [1.0, 2.0], "prev": [1.0, 2.0],
+                                    "yoy": [0.0, 0.1], "change": [0.0, 0.2]})}
+    # the app passes "AUST" for "All states"
+    assert list(B.sa4(t, "AUST")["region_name"]) == ["Y", "X"]
+    assert list(B.sa4(t, "WA")["region_name"]) == ["Y"]
+    assert list(B.sa4(t, level="SA4")["region_name"]) == ["X"]
 
 
 def test_sa4_refuses_2019():
