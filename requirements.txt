@@ -2,4 +2,6 @@ pandas>=2.2,<3
 duckdb>=1.1,<2
 matplotlib>=3.8
 openpyxl>=3.1   # reads the IVI workbooks (.xlsx)
+streamlit>=1.50   # the dashboard (Part 4)
+altair>=5
 pytest>=8.0
