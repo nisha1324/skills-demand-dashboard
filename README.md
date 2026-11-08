@@ -1,7 +1,7 @@
 # Which jobs and regions are hiring in Australia? (skills-demand dashboard)
 
-> **Status: in progress, Parts 1-3 of 5 done** (source profile, occupation demand, regional demand).
-> Next: a Streamlit dashboard (Part 4), then CI and the final write-up (Part 5).
+> **Status: in progress, Parts 1-4 of 5 done** (source profile, occupation demand, regional demand,
+> dashboard). Next: CI and the final write-up (Part 5).
 
 Recruiters, training providers and workforce planners all need the same answer: **which
 occupations are employers advertising for, where, and is that demand rising or cooling?** A
@@ -186,6 +186,42 @@ for all 8 capitals, at most 0.9 points apart.
   practitioners and nurses went from 120 to 350 a month in a year; check the monthly series before
   acting on one. Use region figures to rank and compare places, not as exact counts.
 
+## Part 4: the dashboard
+
+`app/dashboard.py` is a Streamlit app that lets a recruiter, training provider or planner ask their
+own version of these questions without reading the reports. It runs offline from the files in this
+repo: the tables are the CSVs that Parts 2 and 3 wrote to `results/`, and the headline tiles and
+monthly charts come from the committed snapshot through the same functions the reports use.
+
+![Dashboard overview](docs/dashboard_overview.png)
+
+| Tab | What it answers |
+|---|---|
+| Overview | How many ads a month, for Australia or any state, against the year before and 2019; the monthly series with the 2019 average marked; which of the 8 occupation groups are rising or falling |
+| Occupations | All 351 published occupations, nationally or by state: filter by group, size or name, sort by size, growth or ads gained/lost, with a demand-matrix label for each. Pick one to see its monthly series. |
+| Regions | Regional Australia's share of ads over time, the 37 IVI regions against 2019 or the year before, and what one region is hiring for (with location quotients and the monthly series) |
+| SA4 areas | The 8 greater capital cities and 42 regional SA4s, year on year only |
+| About the data | Source, licence, and the rules below |
+
+**Part 1's rules are built in, not left to the user.** Growth rates are on 12-month averages, so the
+summer dip never shows up as a slump in a ranking (charts draw the raw series lightly behind its
+12-month average). No growth rate is shown on a base of 20 ads a month or fewer, and no location
+quotient for a group that small; rate sorts leave those rows out instead of ranking them. Regions are compared
+only with regions, and the SA4 tab has no 2019 option at all.
+
+![Regions tab](docs/dashboard_regions.png)
+
+**So what for the business?** A question that took a report section now takes a few filters. For
+example, a training provider asking "which professional roles are growing in Queensland?" picks
+Queensland, Professionals and "Fastest rising on the year" with at least 100 ads a month. The top
+riser is primary school teachers, from 116 to 174 ads a month (+50.0%), but that's 7.9 times its
+2019 level, so the drill-down chart is the next click before acting. The dashboard is built for
+that habit: every ranking sits one click away from the monthly series behind it.
+
+**Run it:** `streamlit run app/dashboard.py`, then open http://localhost:8501. To publish it,
+create a free app on [Streamlit Community Cloud](https://share.streamlit.io) from this repo with
+main file `app/dashboard.py` (it needs no secrets).
+
 ## How to run
 
 ```bash
@@ -197,6 +233,7 @@ python -m scripts.build_snapshot    # optional: rebuilds data/*.csv.gz from them
 python -m scripts.profile_source    # Part 1 report and charts, from the committed snapshot
 python -m scripts.occupation_demand # Part 2 report, charts and CSVs
 python -m scripts.regional_demand   # Part 3 report, charts and CSVs
+streamlit run app/dashboard.py      # Part 4 dashboard
 pytest
 ```
 
@@ -214,7 +251,10 @@ ivi/load.py                 load the snapshot with the right types (codes stay t
 ivi/profile.py              the Part 1 checks, as small testable functions
 ivi/demand.py               the Part 2 measures (12-month averages, the 20-ad floor, demand matrix)
 ivi/regions.py              the Part 3 measures (capital vs regional, location quotient, SA4 year on year)
-tests/                      unit tests on hand-made data + checks on the committed snapshot
+ivi/dashboard.py            the Part 4 data layer (filters, sorts with the 20-ad floor, region views)
+app/dashboard.py            the Streamlit dashboard (Part 4)
+docs/                       dashboard screenshots
+tests/                      unit tests on hand-made data, checks on the committed snapshot, app smoke tests
 ```
 
 ## Data credit

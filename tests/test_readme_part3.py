@@ -21,7 +21,7 @@ METHOD = {"1", "2", "3", "8", "10", "12", "29", "37", "42", "2010", "2019", "202
 
 
 def part3():
-    return README.split("## Part 3:")[1].split("## How to run")[0]
+    return README.split("## Part 3:")[1].split("## Part 4:")[0]
 
 
 def flat(text):
