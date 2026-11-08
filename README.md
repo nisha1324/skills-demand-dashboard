@@ -1,7 +1,28 @@
 # Which jobs and regions are hiring in Australia? (skills-demand dashboard)
 
-> **Status: in progress, Parts 1-4 of 5 done** (source profile, occupation demand, regional demand,
-> dashboard). Next: CI and the final write-up (Part 5).
+[![CI](https://github.com/nisha1324/skills-demand-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/nisha1324/skills-demand-dashboard/actions/workflows/ci.yml)
+
+> **Status: complete.** Source profile, occupation demand, regional demand, a Streamlit dashboard,
+> and CI that reruns every report on each push. Built on the August 2026 IVI release.
+
+## TL;DR
+
+- **Hiring has cooled but not collapsed.** Online job ads averaged 209,655 a month in the 12 months
+  to August 2026: −3.3% on the year before, still +21.2% on 2019. The latest 3 months are +0.9% on a
+  year earlier, so the fall has stopped for now.
+- **Demand has moved to regional Australia.** Regional areas are +67.1% on 2019 against +4.9% for
+  the capital-city regions, and now hold 30.1% of placed ads (21.2% in 2019). The only regions below
+  2019 are Canberra & ACT, Sydney and Melbourne.
+- **Health is the growth story, and it's regional.** GPs and resident medical officers added 1,362
+  ads a month (+36.4%). 47.3% of ads for medical practitioners and nurses are now regional, and
+  those regional ads rose +27.4% on the year while the capitals' were flat (−0.2%).
+- **Sales-management, accounting and ICT roles are the weak side.** 22 big occupations are below
+  2019 and still falling, the largest being advertising and sales managers, accountants and
+  software programmers (−46.6% on 2019). ICT professional ads stay in the capitals: only 5.7% are
+  regional.
+- **A dashboard with the rules built in.** A Streamlit app answers these questions by state, region
+  and occupation. It uses 12-month averages, never ranks a base of 20 ads a month or fewer, and
+  compares regions only with regions, so the misleading views Part 1 warns about aren't on offer.
 
 Recruiters, training providers and workforce planners all need the same answer: **which
 occupations are employers advertising for, where, and is that demand rising or cooling?** A
@@ -222,6 +243,80 @@ that habit: every ranking sits one click away from the monthly series behind it.
 create a free app on [Streamlit Community Cloud](https://share.streamlit.io) from this repo with
 main file `app/dashboard.py` (it needs no secrets).
 
+## Part 5: tests and CI
+
+Every figure in this README and the reports is generated or checked by code:
+
+- **Unit tests on hand-made data** for each measure: 12-month averages, the 20-ad floor (a base of
+  exactly 20 gets no rate), the demand matrix, regional share, location quotients and the
+  dashboard's filters and sorts.
+- **Checks on the real snapshot:** occupation groups and states add up to their totals, capital
+  plus regional areas make up all 37 IVI regions, location quotients average to 1, and the
+  dashboard reproduces the reports' headline figures.
+- **README tests:** the figures in Parts 1-4 are matched to the reports and CSVs. The TL;DR,
+  recommendations and limitations may only repeat those figures, next to the same subject. So a
+  typed-in number that drifts from the data fails the build.
+- **Dashboard smoke tests:** Streamlit's AppTest runs the app headless, opens every tab and works
+  its filters (state, occupation group, size, search, region, sort).
+
+On every push, [GitHub Actions](.github/workflows/ci.yml) installs the exact package versions in
+`requirements-lock.txt`, reruns the three reports from the committed snapshot (no network needed),
+fails if any committed report, CSV or chart changes by a single byte, then runs the test suite.
+
+## Recommendations
+
+In priority order, each with the person who would act on it:
+
+1. **Grow regional desks, starting with health and care.** *(Recruitment agency, business
+   development lead.)* 3 in 10 placed ads are outside the capitals, and over the last year regional
+   areas gained 362 ads a month while the capitals lost 7,253. Regional ads for medical
+   practitioners and nurses rose +27.4%. The fastest-growing big regional markets are Tamworth and
+   North West NSW (+23.3%), Dubbo & Western NSW (+12.5%) and NSW North Coast (+8.5%).
+2. **Put health, care and electrical courses first, with regional placements.** *(Training
+   provider, course planning.)* Registered nurses (6,883 ads a month, +6.1%), GPs (5,105, +36.4%)
+   and electricians (3,064, +9.3%) are big and growing. On the NSW North Coast, medical
+   practitioners and nurses are 2.7× as common in ads as across all regions. Child carers (−12.9%)
+   are the exception to watch.
+3. **Don't size ICT, accounting or sales-management intakes on 2019 demand.** *(Training provider
+   and workforce planner.)* These are among the 22 big occupations below 2019 and still falling;
+   software programmers are −46.6% on 2019 and ICT business and systems analysts −41.0%. ICT is a
+   capital-city market, with only 5.7% of ads regional.
+4. **Move capital-city recruiting effort away from the biggest losers.** *(Recruitment agency,
+   capital-city desks.)* General clerks (−806 a month), waiters (−534), child carers (−490) and
+   software programmers (−460) lost the most ads. Machinery operators and drivers is the only
+   major group up on the year (+6.6%, and +62.0% on 2019).
+5. **Plan regional hiring for more competition, capital-city hiring for less.** *(Employers' HR
+   and workforce planning.)* Every regional area has more ads than in 2019; Canberra (−21.4%),
+   Sydney (−18.5%) and Melbourne (−15.3%) have fewer. A regional employer is advertising alongside
+   more other ads for the same local workers.
+6. **Report the IVI with Part 1's rules, and check big jumps before acting.** *(Analytics team.)*
+   Use 12-month averages or the same month a year apart, no rates on 20 ads a month or fewer, and
+   regions compared only with regions. Jumps like GPs at 4.8× and vets at 5.1× their 2019 level, or
+   Tamworth's doctor and nurse ads going from 120 to 350 a month, may be coding changes or a few
+   employers: open the monthly series first. The dashboard makes that one click.
+
+## Limitations
+
+- **Job ads are a demand signal, not vacancies or hires.** The IVI covers ads on SEEK, CareerOne and
+  Workforce Australia. It misses word-of-mouth hiring and employer sites, counts a multi-position ad
+  once, and leans towards higher-skilled roles.
+- **One release.** Everything is from the August 2026 release, pinned by SHA-256. Newer months need a
+  new download, new pins and a rerun; the official site drops scripted connections, so the download
+  falls back to Internet Archive copies, which can lag a release behind.
+- **Raw 3-month averages below the national level.** Occupation and region series aren't seasonally
+  adjusted, which is why every comparison is on 12-month averages or a year apart.
+- **Gaps in the published data.** 7 occupations are suppressed (1.13% of ads in August 2026), and
+  about 3% of ads aren't placed in any region. Region figures are for ranking and comparing places,
+  not exact counts.
+- **IVI regions aren't ABS capital-city boundaries.** Hobart's region takes in the south-east, and
+  Canberra's is the whole territory.
+- **Large jumps aren't verified.** 5 occupations with 100+ ads a month are at least 3 times their 2019
+  level. The data can't say whether that's a shortage or a coding change.
+- **What, not why.** The analysis shows where ads moved. It doesn't test causes such as migration,
+  remote work or health funding.
+- **The dashboard runs locally.** It isn't deployed yet; publishing it needs a (free) Streamlit
+  Community Cloud sign-in.
+
 ## How to run
 
 ```bash
@@ -239,6 +334,9 @@ pytest
 
 The committed snapshot is enough to rerun every report; the download is only needed to rebuild it.
 
+For byte-identical charts and CSVs (what CI checks), install `requirements-lock.txt` instead: it pins
+the exact versions the committed outputs were made with, on Python 3.12.
+
 ## Project layout
 
 ```
@@ -254,6 +352,8 @@ ivi/regions.py              the Part 3 measures (capital vs regional, location q
 ivi/dashboard.py            the Part 4 data layer (filters, sorts with the 20-ad floor, region views)
 app/dashboard.py            the Streamlit dashboard (Part 4)
 docs/                       dashboard screenshots
+.github/workflows/ci.yml    CI: rerun the 3 reports, fail on any change, then pytest
+requirements-lock.txt       exact package versions for CI (requirements.txt has the ranges)
 tests/                      unit tests on hand-made data, checks on the committed snapshot, app smoke tests
 ```
 
